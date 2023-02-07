@@ -1,72 +1,70 @@
 import { 
     useCallback,
     useEffect,
-    useRef,
     useState
 } from 'react';
 import './Game.css';
 
-const CELL_SIZE = 15;
-const GRID_WIDTH = 900;
-const GRID_HEIGHT = 900;
+const CELL_SIZE = 25;
+const GRID_WIDTH = 1000;
+const GRID_HEIGHT = 1000;
+const RUNNING_REFRESH_INTERVAL = 300;
 
 const Game = () => {
 
     const rowCount = GRID_HEIGHT / CELL_SIZE;
     const columnCount = GRID_WIDTH / CELL_SIZE;
+    const cellCount = rowCount * columnCount;
 
-    
-    const [cells, setCells] = useState([]);
     const [simulationRunning, setSimulationRunning] = useState(false);
     const [refreshInterval, setRefreshInterval] = useState(0);
 
-    const gridLocation = useRef(null);
-
     const makeEmptyGrid = useCallback(() => {
         let grid = [];
-        for (let row = 0; row < rowCount; row++) {
-            grid[row] = []; // create an array for each row
-            for (let column = 0; column < columnCount; column++) {
-                grid[row][column] = false; // set to default value - inactive
-            }
+
+        for (let cellIdx = 0; cellIdx < cellCount; cellIdx++) {
+            grid[cellIdx] = false; // set to default value - inactive
         }
+
         return grid;
-    }, [rowCount, columnCount]);
+    }, [cellCount]);
 
     const [grid, setGrid] = useState(makeEmptyGrid());
 
-    const makeCellsArray = useCallback(() => {
-        let cells = [];
-        for (let row = 0; row < rowCount; row++) {
-            for (let column = 0; column < columnCount; column++) {
-                if (grid[row][column])
-                    cells.push({column, row}); // if active in grid, add to the cells array
-            }
-        }
-        return cells;
-    }, [grid, rowCount, columnCount]);
-
     const clearGrid = () => {
         setGrid(makeEmptyGrid());
-        setCells([]);
     };
 
-    const getActiveNeighboursCount = useCallback((grid, xPos, yPos) => {
+    const coordsToCellIdx = useCallback((row, column) => {
+        return (column * columnCount) + row;
+    }, [columnCount]);
+
+    const cellIdxToCoords = useCallback((cellIdx) => {
+        return {
+            column: cellIdx % columnCount,
+            row: Math.floor(cellIdx / rowCount),
+        };
+    }, [columnCount, rowCount]);
+
+    const getActiveNeighboursCount = useCallback((grid, cellIdx) => {
+        const cell = cellIdxToCoords(cellIdx);
+
         let count = 0;
         for (let xAdd = -1; xAdd <= 1; xAdd++) {
             for (let yAdd = -1; yAdd <= 1; yAdd++) {
-                let x = xPos + xAdd;
-                let y = yPos + yAdd;
+                let x = cell.column + xAdd;
+                let y = cell.row + yAdd;
+                let candidateCellIdx = coordsToCellIdx(x, y);
 
                 if (!(x === 0 && y === 0) && 
                     (x >= 0 && x < columnCount) && 
                     (y >= 0 && y < rowCount) && 
-                    (grid[y][x]))
+                    grid[candidateCellIdx])
                     count++;
             }
         }
         return count;
-    }, [rowCount, columnCount]);
+    }, [rowCount, columnCount, cellIdxToCoords, coordsToCellIdx]);
 
     const runIteration = useCallback(() => {
         let newGrid = makeEmptyGrid();
@@ -79,24 +77,21 @@ const Game = () => {
         4. Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
         */
        
-       for (let row = 0; row < rowCount; row++) {
-           for (let column = 0; column < columnCount; column++) {
-                let activeNeighouringCells = getActiveNeighboursCount(grid, column, row);
+        for (let cellIdx = 0; cellIdx < cellCount; cellIdx++) {
+            let activeNeighouringCells = getActiveNeighboursCount(grid, cellIdx);
 
-                if (grid[column][row]) {
-                    if (activeNeighouringCells === 2 || activeNeighouringCells === 3)
-                    newGrid[column][row] = true;
-                    else
-                    newGrid[column][row] = false;
-                } else if (!grid[column][row] && activeNeighouringCells === 3) {
-                    newGrid[column][row] = true;
-                }
+            if (grid[cellIdx]) {
+                if (activeNeighouringCells === 2 || activeNeighouringCells === 3)
+                    newGrid[cellIdx] = true;
+                else
+                    newGrid[cellIdx] = false;
+            } else if (!grid[cellIdx] && activeNeighouringCells === 3) {
+                newGrid[cellIdx] = true;
             }
         }
         
         setGrid(newGrid);
-        setCells(makeCellsArray());
-    }, [grid, setGrid, setCells, columnCount, getActiveNeighboursCount, makeCellsArray, makeEmptyGrid, rowCount]);
+    }, [grid, setGrid, cellCount, getActiveNeighboursCount, makeEmptyGrid]);
     
     useEffect(() => {
         if (refreshInterval && refreshInterval > 0) {
@@ -107,7 +102,7 @@ const Game = () => {
     
     const runGame = () => {
         setSimulationRunning(true);
-        setRefreshInterval(200);
+        setRefreshInterval(RUNNING_REFRESH_INTERVAL);
         runIteration();
     }
     
@@ -116,43 +111,27 @@ const Game = () => {
         setRefreshInterval(0);
     }
 
-    const getElementOffset = () => {
-        // get size of element and position relative to viewpoint
-        const rect = gridLocation.getBoundingClientRect();
-        const doc = document.documentElement;
-
-        return {
-            x: (rect.left + window.pageXOffset) - doc.clientLeft,
-            y: (rect.top + window.pageYOffset) - doc.clientTop,
-        };
-    }
-
-    const handleGridClick = (event) => {
-        const elementOffset = getElementOffset();
-        const offsetX = event.clientX - elementOffset.x;
-        const offsetY = event.clientY - elementOffset.y;
-        
-        const x = Math.floor(offsetX / CELL_SIZE);
-        const y = Math.floor(offsetY / CELL_SIZE);
-
-        if ((x >= 0 && x <= columnCount) && (y >= 0 && y <= rowCount)) {
-            grid[y][x] = !grid[y][x]; // 
+    const handleGridClick = (cellIdx) => {
+        if ((cellIdx >= 0) && (cellIdx <= cellCount)) {
+            setGrid(oldGrid => {
+                const newGrid = [...oldGrid];
+                newGrid[cellIdx] = !newGrid[cellIdx];
+                return newGrid;
+            });
         }
-
-        setCells(makeCellsArray());
     }
 
     const handleRandomActiveCells = () => {
-        for (let row = 0; row < rowCount; row++) {
-            for (let column = 0; column < columnCount; column++) {
-                if (Math.random() < 0.5)
-                    grid[column][row] = true; // make active
-                else
-                    grid[column][row] = false; // make inactive
-            }
+        let newGrid = makeEmptyGrid();
+
+        for (let cellIdx = 0; cellIdx < cellCount; cellIdx++) {
+            if (Math.random() < 0.5)
+                newGrid[cellIdx] = true; // make active
+            else
+                newGrid[cellIdx] = false; // make inactive
         }
 
-        setCells(makeCellsArray());
+        setGrid(newGrid);
     }
 
     return ( 
@@ -174,13 +153,20 @@ const Game = () => {
                         backgroundSize: `${CELL_SIZE}px ${CELL_SIZE}px`
                     }
                 } 
-                onClick={handleGridClick} 
-                ref={(loc) => { gridLocation.current = loc; }}
             >
-
-                {cells.map(cell => (
-                        <GridCell xCoord={cell.column} yCoord={cell.row} key={`${cell.column},${cell.row}`}/>
-                ))}
+                {
+                    grid.map((cell, cellIdx) => {
+                        const { column, row } = cellIdxToCoords(cellIdx);
+                        return (
+                            <GridCell
+                                column={column} row={row}
+                                isActive={cell}
+                                handleClickEvent={() => handleGridClick(cellIdx)}
+                                key={`cell-${cellIdx}`}
+                            />
+                        );
+                    })
+                }
             </div>
         </div>
     );
@@ -189,16 +175,22 @@ const Game = () => {
 
 const GridCell = (props) => {
 
-    const { xCoord, yCoord } = props;
+    const { column, row, isActive, handleClickEvent } = props;
 
     return (
-        <div className="cell" style={{
-            left: `${CELL_SIZE * xCoord + 1}px`,
-            top: `${CELL_SIZE * yCoord + 1}px`,
-            width: `${CELL_SIZE - 1}px`,
-            height: `${CELL_SIZE - 1}px`,
-        }} />
-    ); // takes into account the grids lines with +- 1px value // TODO: look into this?
+        <div 
+            className={
+                isActive ? "cell cell-active" : "cell cell-inactive"
+            }
+            style={{
+                left: `${CELL_SIZE * column}px`,
+                top: `${CELL_SIZE * row}px`,
+                width: `${CELL_SIZE}px`,
+                height: `${CELL_SIZE}px`,
+            }}
+            onClick={handleClickEvent}
+        />
+    );
 
 }
 
