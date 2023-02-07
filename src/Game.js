@@ -148,7 +148,7 @@ class Game extends React.Component {
     }
 
     render() {
-        const {cells, simulationRunning, refreshInterval} = this.state;
+        const {cells, simulationRunning} = this.state;
 
         return ( 
             <div> 
