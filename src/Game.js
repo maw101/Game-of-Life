@@ -46,6 +46,11 @@ const Game = () => {
         return cells;
     }, [grid, rowCount, columnCount]);
 
+    const clearGrid = () => {
+        setGrid(makeEmptyGrid());
+        setCells([]);
+    };
+
     const getActiveNeighboursCount = useCallback((grid, xPos, yPos) => {
         let count = 0;
         for (let xAdd = -1; xAdd <= 1; xAdd++) {
@@ -159,6 +164,7 @@ const Game = () => {
                         <button onClick={runGame}>Run Game</button>
                 }
                 <button onClick={handleRandomActiveCells}>Random Active</button>
+                <button onClick={clearGrid}>Clear Grid</button>
             </div>
             <div id="grid"
                 style={
