@@ -1,17 +1,13 @@
-import React, {Component} from 'react';
 import './App.css';
 import Game from './Game';
 
-class App extends Component {
+const App = () => {
 
-    render() {
-
-        return (
-            <div className="App">
-                <Game />
-            </div>
-        );
-    }
+    return (
+        <div className="App">
+            <Game />
+        </div>
+    );
 
 }
 
