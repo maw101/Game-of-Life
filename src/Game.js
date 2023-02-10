@@ -49,27 +49,25 @@ const Game = () => {
         };
     }, [columnCount, rowCount]);
 
-    const getActiveNeighboursCount = useCallback((grid, cellIdx) => {
+    const isCellCoordActive = useCallback((x, y) => {
+        let candidateCellIdx = coordsToCellIdx(x, y);
+
+        return !(x === 0 && y === 0) && 
+            (x >= 0 && x < columnCount) && 
+            (y >= 0 && y < rowCount) &&
+            grid[candidateCellIdx];
+    }, [grid, columnCount, rowCount, coordsToCellIdx]);
+
+    const getActiveNeighboursCount = useCallback((cellIdx) => {
         const cell = cellIdxToCoords(cellIdx);
 
-        let count = 0;
-        for (let xAdd = -1; xAdd <= 1; xAdd++) {
-            for (let yAdd = -1; yAdd <= 1; yAdd++) {
-                let x = cell.column + xAdd;
-                let y = cell.row + yAdd;
-                let candidateCellIdx = coordsToCellIdx(x, y);
-                
-                // TODO: tidy condition
-                if (!(x === 0 && y === 0) && 
-                    (x >= 0 && x < columnCount) && 
-                    (y >= 0 && y < rowCount) && 
-                    grid[candidateCellIdx]) {
-                    count++; 
-                }
-            }
-        }
-        return count;
-    }, [rowCount, columnCount, cellIdxToCoords, coordsToCellIdx]);
+        const coord_deltas = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+        const states = coord_deltas.map(
+            (delta) => isCellCoordActive(cell.column + delta[0], cell.row + delta[1])
+        );
+
+        return states.filter(Boolean).length;
+    }, [cellIdxToCoords, isCellCoordActive]);
 
     const runIteration = useCallback(() => {
         let newGrid = makeEmptyGrid();
@@ -83,7 +81,7 @@ const Game = () => {
         */
        
         for (let cellIdx = 0; cellIdx < getCellCount(); cellIdx++) {
-            let activeNeighouringCells = getActiveNeighboursCount(grid, cellIdx);
+            let activeNeighouringCells = getActiveNeighboursCount(cellIdx);
 
             if (grid[cellIdx]) {
                 if (activeNeighouringCells === 2 || activeNeighouringCells === 3) {
