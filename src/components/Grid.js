@@ -157,7 +157,6 @@ const Grid = () => {
                 style={{
                     width: GRID_WIDTH,
                     height: GRID_HEIGHT,
-                    backgroundSize: `${CELL_SIZE}px ${CELL_SIZE}px`
                 }} 
             >
                 {
