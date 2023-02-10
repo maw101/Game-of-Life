@@ -1,3 +1,5 @@
+import './css/GridCell.css';
+
 const GridCell = (props) => {
 
     const { column, row, cellSize, isActive, handleClickEvent } = props;
@@ -17,6 +19,6 @@ const GridCell = (props) => {
         />
     );
 
-}
+};
 
 export default GridCell;

@@ -4,16 +4,15 @@ import {
     useState
 } from 'react';
 
-import GridCell from './components/GridCell';
+import './css/Grid.css';
+import GridCell from './GridCell';
 
-import './Game.css';
+const Grid = () => {
 
-const CELL_SIZE = 25;
-const GRID_WIDTH = 1000;
-const GRID_HEIGHT = 1000;
-const RUNNING_REFRESH_INTERVAL = 300;
-
-const Game = () => {
+    const CELL_SIZE = 25;
+    const GRID_WIDTH = 1000;
+    const GRID_HEIGHT = 1000;
+    const RUNNING_REFRESH_INTERVAL = 300;
 
     const rowCount = GRID_HEIGHT / CELL_SIZE;
     const columnCount = GRID_WIDTH / CELL_SIZE;
@@ -37,10 +36,6 @@ const Game = () => {
 
     const [grid, setGrid] = useState(makeEmptyGrid());
 
-    const clearGrid = () => {
-        setGrid(makeEmptyGrid());
-    };
-
     const coordsToCellIdx = useCallback((row, column) => {
         return (column * columnCount) + row;
     }, [columnCount]);
@@ -56,9 +51,9 @@ const Game = () => {
         let candidateCellIdx = coordsToCellIdx(x, y);
 
         return !(x === 0 && y === 0) && 
-            (x >= 0 && x < columnCount) && 
-            (y >= 0 && y < rowCount) &&
-            grid[candidateCellIdx];
+                (x >= 0 && x < columnCount) && 
+                (y >= 0 && y < rowCount) &&
+                grid[candidateCellIdx];
     }, [grid, columnCount, rowCount, coordsToCellIdx]);
 
     const getActiveNeighboursCount = useCallback((cellIdx) => {
@@ -99,26 +94,26 @@ const Game = () => {
         
         setGrid(newGrid);
     }, [grid, setGrid, getActiveNeighboursCount, getCellCount, makeEmptyGrid]);
-    
+
     useEffect(() => {
         if (refreshInterval && refreshInterval > 0) {
             const interval = setInterval(runIteration, refreshInterval);
             return () => clearInterval(interval);
         }
     }, [refreshInterval, runIteration]);
-    
-    const runGame = () => {
+
+    const handleRunGame = () => {
         setSimulationRunning(true);
         setRefreshInterval(RUNNING_REFRESH_INTERVAL);
         runIteration();
     }
-    
-    const stopGame = () => {
+
+    const handleStopGame = () => {
         setSimulationRunning(false);
         setRefreshInterval(0);
     }
 
-    const handleGridClick = (cellIdx) => {
+    const handleCellToggle = (cellIdx) => {
         if ((cellIdx >= 0) && (cellIdx <= getCellCount())) {
             setGrid(oldGrid => {
                 const newGrid = [...oldGrid];
@@ -126,9 +121,9 @@ const Game = () => {
                 return newGrid;
             });
         }
-    }
+    };
 
-    const handleRandomActiveCells = () => {
+    const handleGridRandomise = () => {
         let newGrid = makeEmptyGrid();
 
         for (let cellIdx = 0; cellIdx < getCellCount(); cellIdx++) {
@@ -141,18 +136,22 @@ const Game = () => {
         }
 
         setGrid(newGrid);
-    }
+    };
+
+    const handleClearGrid = () => {
+        setGrid(makeEmptyGrid());
+    };
 
     return ( 
         <div> 
             <div id="form">
                 {
                     simulationRunning ?
-                        <button onClick={stopGame}>Stop Game</button> :
-                        <button onClick={runGame}>Run Game</button>
+                        <button onClick={handleStopGame}>Stop Game</button> :
+                        <button onClick={handleRunGame}>Run Game</button>
                 }
-                <button onClick={handleRandomActiveCells}>Random Active</button>
-                <button onClick={clearGrid}>Clear Grid</button>
+                <button onClick={handleGridRandomise}>Random Active</button>
+                <button onClick={handleClearGrid}>Clear Grid</button>
             </div>
             <div id="grid"
                 style={{
@@ -166,9 +165,9 @@ const Game = () => {
                         const { column, row } = cellIdxToCoords(cellIdx);
                         return (
                             <GridCell
-                                column={column} row={row}
+                                column={column} row={row} cellSize={CELL_SIZE}
                                 isActive={cell}
-                                handleClickEvent={() => handleGridClick(cellIdx)}
+                                handleClickEvent={() => handleCellToggle(cellIdx)}
                                 key={`cell-${cellIdx}`}
                             />
                         );
@@ -180,4 +179,4 @@ const Game = () => {
 
 }
 
-export default Game;
+export default Grid;

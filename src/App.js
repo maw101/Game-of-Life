@@ -1,11 +1,11 @@
 import './App.css';
-import Game from './Game';
+import Grid from './components/Grid';
 
 const App = () => {
 
     return (
         <div className="App">
-            <Game />
+            <Grid />
         </div>
     );
 
