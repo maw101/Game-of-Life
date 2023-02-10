@@ -3,6 +3,9 @@ import {
     useEffect,
     useState
 } from 'react';
+
+import GridCell from './components/GridCell';
+
 import './Game.css';
 
 const CELL_SIZE = 25;
@@ -173,27 +176,6 @@ const Game = () => {
                 }
             </div>
         </div>
-    );
-
-}
-
-const GridCell = (props) => {
-
-    const { column, row, isActive, handleClickEvent } = props;
-
-    return (
-        <div 
-            className={
-                isActive ? "cell cell-active" : "cell cell-inactive"
-            }
-            style={{
-                left: `${CELL_SIZE * column}px`,
-                top: `${CELL_SIZE * row}px`,
-                width: `${CELL_SIZE}px`,
-                height: `${CELL_SIZE}px`,
-            }}
-            onClick={handleClickEvent}
-        />
     );
 
 }
