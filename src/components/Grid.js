@@ -25,7 +25,7 @@ const Grid = () => {
     }, [rowCount, columnCount]);
 
     const makeEmptyGrid = useCallback(() => {
-        let grid = [];
+        const grid = [];
 
         for (let cellIdx = 0; cellIdx < getCellCount(); cellIdx++) {
             grid[cellIdx] = false; // set to default value - inactive
@@ -48,7 +48,7 @@ const Grid = () => {
     }, [columnCount, rowCount]);
 
     const isCellCoordActive = useCallback((x, y) => {
-        let candidateCellIdx = coordsToCellIdx(x, y);
+        const candidateCellIdx = coordsToCellIdx(x, y);
 
         return !(x === 0 && y === 0) && 
                 (x >= 0 && x < columnCount) && 
@@ -68,7 +68,7 @@ const Grid = () => {
     }, [cellIdxToCoords, isCellCoordActive]);
 
     const runIteration = useCallback(() => {
-        let newGrid = makeEmptyGrid();
+        const newGrid = makeEmptyGrid();
         
         /*
         Rules:
@@ -79,7 +79,7 @@ const Grid = () => {
         */
        
         for (let cellIdx = 0; cellIdx < getCellCount(); cellIdx++) {
-            let activeNeighouringCells = getActiveNeighboursCount(cellIdx);
+            const activeNeighouringCells = getActiveNeighboursCount(cellIdx);
 
             if (grid[cellIdx]) {
                 if (activeNeighouringCells === 2 || activeNeighouringCells === 3) {
@@ -124,7 +124,7 @@ const Grid = () => {
     };
 
     const handleGridRandomise = () => {
-        let newGrid = makeEmptyGrid();
+        const newGrid = makeEmptyGrid();
 
         for (let cellIdx = 0; cellIdx < getCellCount(); cellIdx++) {
             // Make active with 0.5 probability.
