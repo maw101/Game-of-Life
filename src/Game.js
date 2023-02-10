@@ -58,12 +58,14 @@ const Game = () => {
                 let x = cell.column + xAdd;
                 let y = cell.row + yAdd;
                 let candidateCellIdx = coordsToCellIdx(x, y);
-
+                
+                // TODO: tidy condition
                 if (!(x === 0 && y === 0) && 
                     (x >= 0 && x < columnCount) && 
                     (y >= 0 && y < rowCount) && 
-                    grid[candidateCellIdx])
-                    count++;
+                    grid[candidateCellIdx]) {
+                    count++; 
+                }
             }
         }
         return count;
@@ -84,10 +86,11 @@ const Game = () => {
             let activeNeighouringCells = getActiveNeighboursCount(grid, cellIdx);
 
             if (grid[cellIdx]) {
-                if (activeNeighouringCells === 2 || activeNeighouringCells === 3)
+                if (activeNeighouringCells === 2 || activeNeighouringCells === 3) {
                     newGrid[cellIdx] = true;
-                else
+                } else {
                     newGrid[cellIdx] = false;
+                }
             } else if (!grid[cellIdx] && activeNeighouringCells === 3) {
                 newGrid[cellIdx] = true;
             }
@@ -128,10 +131,12 @@ const Game = () => {
         let newGrid = makeEmptyGrid();
 
         for (let cellIdx = 0; cellIdx < getCellCount(); cellIdx++) {
-            if (Math.random() < 0.5)
-                newGrid[cellIdx] = true; // make active
-            else
-                newGrid[cellIdx] = false; // make inactive
+            // Make active with 0.5 probability.
+            if (Math.random() < 0.5) {
+                newGrid[cellIdx] = true;
+            } else {
+                newGrid[cellIdx] = false;
+            }
         }
 
         setGrid(newGrid);
@@ -149,13 +154,11 @@ const Game = () => {
                 <button onClick={clearGrid}>Clear Grid</button>
             </div>
             <div id="grid"
-                style={
-                    {
-                        width: GRID_WIDTH,
-                        height: GRID_HEIGHT,
-                        backgroundSize: `${CELL_SIZE}px ${CELL_SIZE}px`
-                    }
-                } 
+                style={{
+                    width: GRID_WIDTH,
+                    height: GRID_HEIGHT,
+                    backgroundSize: `${CELL_SIZE}px ${CELL_SIZE}px`
+                }} 
             >
                 {
                     grid.map((cell, cellIdx) => {
