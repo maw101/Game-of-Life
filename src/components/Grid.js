@@ -158,10 +158,10 @@ const Grid = () => {
                 <Stack spacing={2} direction="row" justifyContent="center" alignItems="center">
                     {
                         simulationRunning ?
-                            <Button onClick={handleStopGame} variant="outlined" size="large" color="primary" startIcon={<StopCircleIcon />}>Stop Game</Button> :
-                            <Button onClick={handleRunGame} variant="outlined" size="large" color="primary" startIcon={<PlayCircleIcon />}>Run Game</Button>
+                            <Button onClick={handleStopGame} variant="outlined" size="large" color="white" startIcon={<StopCircleIcon />}>Stop Game</Button> :
+                            <Button onClick={handleRunGame} variant="outlined" size="large" color="white" startIcon={<PlayCircleIcon />}>Run Game</Button>
                     }
-                    <ButtonGroup variant="outlined" size="large" aria-label="outlined primary button group">
+                    <ButtonGroup variant="outlined" size="large" color="white" aria-label="outlined white button group">
                         <Button onClick={handleGridRandomise} startIcon={<CasinoIcon />}>Randomise Grid</Button>
                         <Button onClick={handleClearGrid} startIcon={<HighlightOffIcon />}>Clear Grid</Button>
                     </ButtonGroup>

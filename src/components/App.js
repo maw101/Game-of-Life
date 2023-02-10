@@ -8,6 +8,10 @@ import Grid from './Grid';
 const darkTheme = createTheme({
     palette: {
       mode: 'dark',
+      white: {
+        main: '#fff',
+        contrastText: '#fff',
+      },
     },
   });
 
