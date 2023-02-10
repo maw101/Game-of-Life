@@ -1,5 +1,6 @@
-import './App.css';
-import Grid from './components/Grid';
+import './css/App.css';
+
+import Grid from './Grid';
 
 const App = () => {
 
