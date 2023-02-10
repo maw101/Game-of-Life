@@ -14,20 +14,23 @@ const Game = () => {
 
     const rowCount = GRID_HEIGHT / CELL_SIZE;
     const columnCount = GRID_WIDTH / CELL_SIZE;
-    const cellCount = rowCount * columnCount;
 
     const [simulationRunning, setSimulationRunning] = useState(false);
     const [refreshInterval, setRefreshInterval] = useState(0);
 
+    const getCellCount = useCallback(() => {
+        return rowCount * columnCount;
+    }, [rowCount, columnCount]);
+
     const makeEmptyGrid = useCallback(() => {
         let grid = [];
 
-        for (let cellIdx = 0; cellIdx < cellCount; cellIdx++) {
+        for (let cellIdx = 0; cellIdx < getCellCount(); cellIdx++) {
             grid[cellIdx] = false; // set to default value - inactive
         }
 
         return grid;
-    }, [cellCount]);
+    }, [getCellCount]);
 
     const [grid, setGrid] = useState(makeEmptyGrid());
 
@@ -77,7 +80,7 @@ const Game = () => {
         4. Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
         */
        
-        for (let cellIdx = 0; cellIdx < cellCount; cellIdx++) {
+        for (let cellIdx = 0; cellIdx < getCellCount(); cellIdx++) {
             let activeNeighouringCells = getActiveNeighboursCount(grid, cellIdx);
 
             if (grid[cellIdx]) {
@@ -91,7 +94,7 @@ const Game = () => {
         }
         
         setGrid(newGrid);
-    }, [grid, setGrid, cellCount, getActiveNeighboursCount, makeEmptyGrid]);
+    }, [grid, setGrid, getActiveNeighboursCount, getCellCount, makeEmptyGrid]);
     
     useEffect(() => {
         if (refreshInterval && refreshInterval > 0) {
@@ -112,7 +115,7 @@ const Game = () => {
     }
 
     const handleGridClick = (cellIdx) => {
-        if ((cellIdx >= 0) && (cellIdx <= cellCount)) {
+        if ((cellIdx >= 0) && (cellIdx <= getCellCount())) {
             setGrid(oldGrid => {
                 const newGrid = [...oldGrid];
                 newGrid[cellIdx] = !newGrid[cellIdx];
@@ -124,7 +127,7 @@ const Game = () => {
     const handleRandomActiveCells = () => {
         let newGrid = makeEmptyGrid();
 
-        for (let cellIdx = 0; cellIdx < cellCount; cellIdx++) {
+        for (let cellIdx = 0; cellIdx < getCellCount(); cellIdx++) {
             if (Math.random() < 0.5)
                 newGrid[cellIdx] = true; // make active
             else
