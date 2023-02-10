@@ -4,6 +4,16 @@ import {
     useState
 } from 'react';
 
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import Button from '@mui/material/Button';
+import PlayCircleIcon from '@mui/icons-material/PlayCircle';
+import StopCircleIcon from '@mui/icons-material/StopCircle';
+import CasinoIcon from '@mui/icons-material/Casino';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+
 import './css/Grid.css';
 import GridCell from './GridCell';
 
@@ -143,21 +153,28 @@ const Grid = () => {
     };
 
     return ( 
-        <div> 
-            <div id="form">
-                {
-                    simulationRunning ?
-                        <button onClick={handleStopGame}>Stop Game</button> :
-                        <button onClick={handleRunGame}>Run Game</button>
-                }
-                <button onClick={handleGridRandomise}>Random Active</button>
-                <button onClick={handleClearGrid}>Clear Grid</button>
-            </div>
-            <div id="grid"
-                style={{
+        <Container> 
+            <Box sx={{ m: 1 }}>
+                <Stack spacing={2} direction="row" justifyContent="center" alignItems="center">
+                    {
+                        simulationRunning ?
+                            <Button onClick={handleStopGame} variant="outlined" size="large" color="white" startIcon={<StopCircleIcon />}>Stop Game</Button> :
+                            <Button onClick={handleRunGame} variant="outlined" size="large" color="white" startIcon={<PlayCircleIcon />}>Run Game</Button>
+                    }
+                    <ButtonGroup variant="outlined" size="large" color="white" aria-label="outlined white button group">
+                        <Button onClick={handleGridRandomise} startIcon={<CasinoIcon />}>Randomise Grid</Button>
+                        <Button onClick={handleClearGrid} startIcon={<HighlightOffIcon />}>Clear Grid</Button>
+                    </ButtonGroup>
+                </Stack>
+            </Box>
+            <Box 
+                sx={{
+                    mx: 'auto',
+                    my: 1,
                     width: GRID_WIDTH,
                     height: GRID_HEIGHT,
-                }} 
+                    position: "relative"
+                }}
             >
                 {
                     grid.map((cell, cellIdx) => {
@@ -172,8 +189,8 @@ const Grid = () => {
                         );
                     })
                 }
-            </div>
-        </div>
+            </Box>
+        </Container>
     );
 
 }
