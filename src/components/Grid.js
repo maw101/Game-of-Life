@@ -150,6 +150,13 @@ const Grid = () => {
         setGrid(makeEmptyGrid());
     };
 
+    const handleSizeChange = (e, newSize) => {
+        handleStopGame()
+        
+        setGridSize(newSize);
+        setGrid(makeEmptyGrid());
+    };
+
     return ( 
         <Container> 
             <Box sx={{ m: 1 }}>
@@ -164,6 +171,25 @@ const Grid = () => {
                         <Button onClick={handleClearGrid} startIcon={<HighlightOffIcon />}>Clear Grid</Button>
                     </ButtonGroup>
                 </Stack>
+                <Box sx={{
+                    mx: 'auto',
+                    mt: 7,
+                    mb: 1,
+                    width: "50%",
+                }}
+                >
+                    <Slider
+                        aria-label="Always visible"
+                        step={5}
+                        min={5}
+                        value={gridSize}
+                        max={100}
+                        onChange={handleSizeChange}
+                        valueLabelDisplay="on"
+                        valueLabelFormat={(value) => `Grid Size: ${value}`}
+                        color="white"
+                    />
+                </Box>
             </Box>
             <Box 
                 sx={{
