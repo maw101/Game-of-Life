@@ -208,7 +208,7 @@ const Grid = () => {
                                 column={column} row={row} cellSize={CELL_SIZE}
                                 isActive={cell}
                                 handleClickEvent={() => handleCellToggle(cellIdx)}
-                                key={`cell-${cellIdx}`}
+                                key={`cell-${cellIdx}-${cell}`}
                             />
                         );
                     })
