@@ -20,19 +20,17 @@ import GridCell from './GridCell';
 const Grid = () => {
 
     const CELL_SIZE = 25;
-    const GRID_WIDTH = 1000;
-    const GRID_HEIGHT = 1000;
     const RUNNING_REFRESH_INTERVAL = 300;
+    const DEFAULT_GRID_SIZE = 25;
 
-    const rowCount = GRID_HEIGHT / CELL_SIZE;
-    const columnCount = GRID_WIDTH / CELL_SIZE;
+    const [gridSize, setGridSize] = useState(DEFAULT_GRID_SIZE);
 
     const [simulationRunning, setSimulationRunning] = useState(false);
     const [refreshInterval, setRefreshInterval] = useState(0);
 
     const getCellCount = useCallback(() => {
-        return rowCount * columnCount;
-    }, [rowCount, columnCount]);
+        return gridSize ** 2;
+    }, [gridSize]);
 
     const makeEmptyGrid = useCallback(() => {
         const grid = [];
@@ -47,24 +45,24 @@ const Grid = () => {
     const [grid, setGrid] = useState(makeEmptyGrid());
 
     const coordsToCellIdx = useCallback((row, column) => {
-        return (column * columnCount) + row;
-    }, [columnCount]);
+        return (column * gridSize) + row;
+    }, [gridSize]);
 
     const cellIdxToCoords = useCallback((cellIdx) => {
         return {
-            column: cellIdx % columnCount,
-            row: Math.floor(cellIdx / rowCount),
+            column: cellIdx % gridSize,
+            row: Math.floor(cellIdx / gridSize),
         };
-    }, [columnCount, rowCount]);
+    }, [gridSize]);
 
     const isCellCoordActive = useCallback((x, y) => {
         const candidateCellIdx = coordsToCellIdx(x, y);
 
         return !(x === 0 && y === 0) && 
-                (x >= 0 && x < columnCount) && 
-                (y >= 0 && y < rowCount) &&
+                (x >= 0 && x < gridSize) && 
+                (y >= 0 && y < gridSize) &&
                 grid[candidateCellIdx];
-    }, [grid, columnCount, rowCount, coordsToCellIdx]);
+    }, [grid, gridSize, coordsToCellIdx]);
 
     const getActiveNeighboursCount = useCallback((cellIdx) => {
         const cell = cellIdxToCoords(cellIdx);
@@ -171,8 +169,8 @@ const Grid = () => {
                 sx={{
                     mx: 'auto',
                     my: 1,
-                    width: GRID_WIDTH,
-                    height: GRID_HEIGHT,
+                    width: gridSize * CELL_SIZE,
+                    height: gridSize * CELL_SIZE,
                     position: "relative"
                 }}
             >
