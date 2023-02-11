@@ -9,6 +9,8 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Button from '@mui/material/Button';
+import Slider from '@mui/material/Slider';
+
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import CasinoIcon from '@mui/icons-material/Casino';
