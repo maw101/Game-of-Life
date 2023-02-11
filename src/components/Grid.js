@@ -160,8 +160,8 @@ const Grid = () => {
     };
 
     return ( 
-        <Container> 
-            <Box sx={{ m: 1 }}>
+        <Container maxWidth={false}> 
+            <Box sx={{ my: 2 }}>
                 <Stack spacing={2} direction="row" justifyContent="center" alignItems="center">
                     {
                         simulationRunning ?
@@ -195,7 +195,7 @@ const Grid = () => {
             </Box>
             <Box 
                 sx={{
-                    mx: 'auto',
+                    mx: "auto",
                     my: 1,
                     width: gridSize * CELL_SIZE,
                     height: gridSize * CELL_SIZE,
