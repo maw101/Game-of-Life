@@ -32,10 +32,10 @@ const Grid = () => {
         return gridSize ** 2;
     }, [gridSize]);
 
-    const makeEmptyGrid = useCallback(() => {
+    const makeEmptyGrid = useCallback((newCellCount=getCellCount()) => {
         const grid = [];
 
-        for (let cellIdx = 0; cellIdx < getCellCount(); cellIdx++) {
+        for (let cellIdx = 0; cellIdx < newCellCount; cellIdx++) {
             grid[cellIdx] = false; // set to default value - inactive
         }
 
@@ -154,7 +154,7 @@ const Grid = () => {
         handleStopGame()
         
         setGridSize(newSize);
-        setGrid(makeEmptyGrid());
+        setGrid(makeEmptyGrid(newSize ** 2));
     };
 
     return ( 
