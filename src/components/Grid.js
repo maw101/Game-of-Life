@@ -149,11 +149,13 @@ const Grid = () => {
     };
 
     const handleClearGrid = () => {
+        handleStopGame();
+
         setGrid(makeEmptyGrid());
     };
 
     const handleSizeChange = (e, newSize) => {
-        handleStopGame()
+        handleStopGame();
         
         setGridSize(newSize);
         setGrid(makeEmptyGrid(newSize ** 2));
