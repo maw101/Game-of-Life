@@ -1,7 +1,7 @@
 {
   "name": "react-game-of-life",
   "version": "0.2.0",
-  "homepage" : "https://maw101.github.io/game-of-life",
+  "homepage" : "https://maw101.github.io/Game-of-Life",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.10.5",
